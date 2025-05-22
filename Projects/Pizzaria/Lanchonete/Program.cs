@@ -1,12 +1,21 @@
-using ControleDeContatos.Data;
-using FluentAssertions.Common;
 using Microsoft.EntityFrameworkCore;
+using Pizzaria.Data;
+using Pizzaria.Services.Pizza;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+
+// Enviando a ConnectionString para o DbContext:
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));    // Entrando no appsettings.json para pegar o "DefaultConnection"
+});
+
+// Registrando o serviço de pizza:
+builder.Services.AddScoped<IPizzaInterface, PizzaService>(); // Registrando o serviço de pizza no contêiner de injeção de dependência (DI) do ASP.NET Core.
 
 var app = builder.Build();
 
@@ -28,4 +37,3 @@ app.MapControllerRoute(
 
 
 app.Run();
-
