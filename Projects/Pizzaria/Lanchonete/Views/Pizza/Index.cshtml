@@ -8,7 +8,7 @@
             <a class="btn btn-success" asp-action="Cadastrar" asp-controller="Pizza">Cadastrar nova pizza</a>
         </div>
 
-        <div class="row row-cols-1 rol-cols-sm-2 row-cols-md-3 g-0">
+        <div class="card-body">
            @* Chamando a lista de pizzas: *@
            @if (Model != null)      @* Verificando se a lista não é nula *@
             {
@@ -19,7 +19,7 @@
                     @foreach (var pizza in Model)
                     {
 
-                        <div class="card mx-3 my-3 p-2" style="width: 12rem">
+                        <div class="card" style="width: 12rem;">
 
 
                             @if (pizza.Capa != null)        @* Verificando se existe uma foto cadastrada para a pizza específica*@
@@ -52,3 +52,5 @@
     </div>
 
 </div>
+
+
