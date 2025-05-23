@@ -38,7 +38,7 @@ namespace Pizzaria.Controllers
         {
             if (ModelState.IsValid)
             {
-                var pizza = await _pizzaInterface.CriarPizza(pizzaCriacaoDto, foto);
+                await _pizzaInterface.CriarPizza(pizzaCriacaoDto, foto);
                 return RedirectToAction("Index", "Pizza");
             }
             else
@@ -47,12 +47,18 @@ namespace Pizzaria.Controllers
             }
         }
 
+        public async Task<IActionResult> Remover(int id)
+        {
+            await _pizzaInterface.RemoverPizza(id);
+            return RedirectToAction("Index", "Pizza");
+        }
+
         [HttpPost]
         public async Task<IActionResult> Editar(PizzaModel pizzaModel, IFormFile? foto)
         {
             if (ModelState.IsValid)
             {
-                var pizza = await _pizzaInterface.EditarPizza(pizzaModel, foto);
+                await _pizzaInterface.EditarPizza(pizzaModel, foto);
                 return RedirectToAction("Index", "Pizza");
             }
             else

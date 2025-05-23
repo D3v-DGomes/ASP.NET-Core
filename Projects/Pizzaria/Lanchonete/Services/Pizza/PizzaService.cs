@@ -11,7 +11,8 @@ namespace Pizzaria.Services.Pizza
         private readonly AppDbContext _context;
         private readonly string _sistema;
 
-        public PizzaService(AppDbContext context, IWebHostEnvironment sistema)
+        public PizzaService(AppDbContext context,
+                IWebHostEnvironment sistema)
         {
             _context = context;
             _sistema = sistema.WebRootPath;     // Caminho do www
@@ -94,13 +95,20 @@ namespace Pizzaria.Services.Pizza
             try
             {
                 var pizzaBanco = await _context.Pizzas.AsNoTracking().FirstOrDefaultAsync(pizzaBD => pizzaBD.Id == pizza.Id);   // A pizza que está no banco de dados tem que ser igual  a pizza que está sendo editada
+                
+                if (pizzaBanco == null)
+                {
+                    throw new Exception("Pizza não encontrada no banco de dados!");
+                }
+
                 var nomeCaminhoImagem = "";
 
                 if (foto != null)
                 {
                     string caminhoCapaExistente = _sistema + "\\imagem\\" + pizzaBanco.Capa;    // Caminho da imagem existente
 
-                    if (File.Exists(caminhoCapaExistente))
+                    // Garantindo que pizzaBanco.Capa não seja nulo ou vazio antes de tentar excluir o arquivo correspondente:
+                    if (!string.IsNullOrEmpty(pizzaBanco.Capa) && File.Exists(caminhoCapaExistente))
                     {
                         File.Delete(caminhoCapaExistente);    // Deletando a imagem existente
                     }
@@ -113,19 +121,38 @@ namespace Pizzaria.Services.Pizza
                 pizzaBanco.Descricao = pizza.Descricao;
                 pizzaBanco.Valor = pizza.Valor;
 
-                if (nomeCaminhoImagem != "")
+                if (!string.IsNullOrEmpty(nomeCaminhoImagem))
                 {
-                    pizzaBanco.Capa = nomeCaminhoImagem;   
-                }
-                else
-                {
-                    pizzaBanco.Capa = pizzaBanco.Capa;
+                    pizzaBanco.Capa = nomeCaminhoImagem;    // Atualizando o caminho da imagem
                 }
 
                 _context.Update(pizzaBanco);    // Atualizando os dados da pizza no banco de dados
                 await _context.SaveChangesAsync();    // Salvando as alterações no banco de dados
 
                 return pizza;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<PizzaModel> RemoverPizza(int id)
+        {
+            try
+            {
+                PizzaModel? pizza = await _context.Pizzas.FirstOrDefaultAsync(pizzabanco => pizzabanco.Id == id);
+
+                if (pizza == null)
+                { 
+                    throw new Exception("Pizza não encontrada!");
+                }
+
+                _context.Remove(pizza);
+                await _context.SaveChangesAsync();
+
+                return pizza;
+
             }
             catch (Exception ex)
             {
