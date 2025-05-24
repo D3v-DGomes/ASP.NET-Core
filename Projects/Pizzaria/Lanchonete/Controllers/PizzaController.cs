@@ -27,10 +27,22 @@ namespace Pizzaria.Controllers
             return View();
         }
 
+        public async Task<IActionResult> Detalhes (int id)
+        {
+            var pizza = await _pizzaInterface.GetPizzaPorId(id);
+            return View(pizza);
+        }
+
         public async Task<IActionResult> Editar(int id)
         {
             var pizza = await _pizzaInterface.GetPizzaPorId(id);
             return View(pizza);
+        }
+
+        public async Task<IActionResult> Remover(int id)
+        {
+            await _pizzaInterface.RemoverPizza(id);
+            return RedirectToAction("Index", "Pizza");
         }
 
         [HttpPost]
@@ -45,12 +57,6 @@ namespace Pizzaria.Controllers
             {
                 return View(pizzaCriacaoDto);
             }
-        }
-
-        public async Task<IActionResult> Remover(int id)
-        {
-            await _pizzaInterface.RemoverPizza(id);
-            return RedirectToAction("Index", "Pizza");
         }
 
         [HttpPost]

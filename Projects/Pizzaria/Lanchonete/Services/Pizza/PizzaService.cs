@@ -95,7 +95,7 @@ namespace Pizzaria.Services.Pizza
             try
             {
                 var pizzaBanco = await _context.Pizzas.AsNoTracking().FirstOrDefaultAsync(pizzaBD => pizzaBD.Id == pizza.Id);   // A pizza que está no banco de dados tem que ser igual  a pizza que está sendo editada
-                
+
                 if (pizzaBanco == null)
                 {
                     throw new Exception("Pizza não encontrada no banco de dados!");
@@ -117,7 +117,7 @@ namespace Pizzaria.Services.Pizza
                 }
 
                 // Atualizando os dados da pizza:
-                pizzaBanco.Sabor = pizza.Sabor;    
+                pizzaBanco.Sabor = pizza.Sabor;
                 pizzaBanco.Descricao = pizza.Descricao;
                 pizzaBanco.Valor = pizza.Valor;
 
@@ -144,7 +144,7 @@ namespace Pizzaria.Services.Pizza
                 PizzaModel? pizza = await _context.Pizzas.FirstOrDefaultAsync(pizzabanco => pizzabanco.Id == id);
 
                 if (pizza == null)
-                { 
+                {
                     throw new Exception("Pizza não encontrada!");
                 }
 
@@ -153,6 +153,19 @@ namespace Pizzaria.Services.Pizza
 
                 return pizza;
 
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<PizzaModel>> GetPizzasFiltro(string? pesquisar)
+        {
+            try
+            {
+                var pizzas = await _context.Pizzas.Where(pizzaBanco => pizzaBanco.Sabor.Contains(pesquisar)).ToListAsync();   // Vá até o banco e pegue os sabores que contêm o que está no pesquisar
+                return pizzas;
             }
             catch (Exception ex)
             {
