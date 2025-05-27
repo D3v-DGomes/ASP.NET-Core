@@ -1,6 +1,6 @@
-using System.Diagnostics;
 using CadastroContatos.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace ControleDeContatos.Controllers
 {
