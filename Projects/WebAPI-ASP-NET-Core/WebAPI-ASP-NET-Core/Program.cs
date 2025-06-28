@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using WebAPI_ASP_NET_Core.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,13 +11,16 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 
+string? mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");   // String de conexão
+builder.Services.AddDbContext<AppDbContext>(options =>      // Contexto do Entity Framework Core
+                                options.UseMySql(mySqlConnection, 
+                                ServerVersion.AutoDetect(mySqlConnection)));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-
     // Adicionando SwaggerUI:
     app.UseSwaggerUI();
     app.UseSwaggerUI(options =>
